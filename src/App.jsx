@@ -5,7 +5,7 @@ import orangeCandy from "./images/orange-candy.png";
 import yellowCandy from "./images/yellow-candy.png";
 import redCandy from "./images/red-candy.png";
 import purpleCandy from "./images/purple-candy.png";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { setCandies, updateCandies } from "./features/candies/candiesActions";
 import { useDispatch, useSelector } from "react-redux";
 import { checkForColumns, checkForRows } from "./utils/gameLogic";
@@ -24,12 +24,19 @@ function App() {
   const dispatch = useDispatch();
   const candies = useSelector((state) => state.candies);
   const currentCandies = useSelector((state) => state.currentCandies);
+  const animationFrameId = useRef(null);
 
   const handleGameLogic = () => {
     const updatedCandies = [...currentCandies];
+    const initialCandiesState = JSON.stringify(updatedCandies);
     checkForColumns(3, updatedCandies);
     checkForRows(3, updatedCandies);
-    dispatch(updateCandies(updatedCandies));
+    if (JSON.stringify(updatedCandies) !== initialCandiesState) {
+      dispatch(updateCandies(updatedCandies));
+    }
+
+    animationFrameId.current = requestAnimationFrame(handleGameLogic);
+
   };
 
   const createBoard = () => {
@@ -47,12 +54,18 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      handleGameLogic();
-    }, 100);
+    if (currentCandies.length > 0) {
+      // Bắt đầu vòng lặp game logic
+      animationFrameId.current = requestAnimationFrame(handleGameLogic);
+    }
 
-    return () => clearInterval(timer);
-  }, [currentCandies, dispatch]);
+    // Dọn dẹp khi component bị unmount
+    return () => {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
+  }, [currentCandies]);
 
   return (
     <div className="max-w-[650px] p-5 mx-auto my-auto">

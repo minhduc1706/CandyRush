@@ -13,11 +13,13 @@ const candiesReducer = (state = initialState, action) => {
         candies: action.payload,
         currentCandies: action.payload,
       };
-    case UPDATE_CANDIES:
+
+      case UPDATE_CANDIES:
       return {
         ...state,
-        candies: action.payload,
+        currentCandies: action.payload,
       };
+
     default:
       return state;
   }

@@ -1,11 +1,6 @@
 import blank from "../images/blank.png"; 
-const WIDTH = 8; // Kích thước của bảng game
+const WIDTH = 8;
 
-/**
- * Kiểm tra và xử lý các cột có ít nhất 'num' viên kẹo cùng màu liên tiếp.
- * @param {number} num - Số lượng viên kẹo liên tiếp cần kiểm tra.
- * @param {Array} candies - Mảng chứa thông tin về các viên kẹo trên bảng.
- */
 export const checkForColumns = (num, candies) => {
   for (let i = 0; i < WIDTH * WIDTH - (num - 1) * WIDTH; i++) {
     const columnIndices = [];
@@ -25,14 +20,9 @@ export const checkForColumns = (num, candies) => {
   }
 };
 
-/**
- * Kiểm tra và xử lý các hàng có ít nhất 'num' viên kẹo cùng màu liên tiếp.
- * @param {number} num - Số lượng viên kẹo liên tiếp cần kiểm tra.
- * @param {Array} candies - Mảng chứa thông tin về các viên kẹo trên bảng.
- */
+
 export const checkForRows = (num, candies) => {
   for (let i = 0; i < WIDTH * WIDTH; i++) {
-    // Kiểm tra nếu 'i' nằm trong một hàng hợp lệ
     if (i % WIDTH > WIDTH - num) continue;
 
     const rowIndices = [];
