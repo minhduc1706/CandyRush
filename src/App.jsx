@@ -5,9 +5,10 @@ import orangeCandy from "./images/orange-candy.png";
 import yellowCandy from "./images/yellow-candy.png";
 import redCandy from "./images/red-candy.png";
 import purpleCandy from "./images/purple-candy.png";
-import blank from "./images/blank.png";
-import { useRef, useState } from "react";
 import { useEffect } from "react";
+import { setCandies, updateCandies } from "./features/candies/candiesActions";
+import { useDispatch, useSelector } from "react-redux";
+import { checkForColumns, checkForRows } from "./utils/gameLogic";
 
 const WIDTH = 8;
 const candyColors = [
@@ -20,54 +21,15 @@ const candyColors = [
 ];
 
 function App() {
-  const [candies, setCandies] = useState([]);
-  const currentCandies = useRef([]);
+  const dispatch = useDispatch();
+  const candies = useSelector((state) => state.candies);
+  const currentCandies = useSelector((state) => state.currentCandies);
 
-  const checkForColumns = (num) => {
-    for (let i = 0; i < WIDTH * WIDTH - (num - 1) * WIDTH; i++) {
-      const columns = [];
-
-      for (let j = 0; j < num; j++) {
-        columns.push(i + j * WIDTH);
-      }
-
-      const decidedColor = currentCandies.current[i].color;
-
-      if (
-        columns.every(
-          (square) => currentCandies.current[square].color === decidedColor
-        )
-      ) {
-        for (let j = 0; j < columns.length; j++) {
-          currentCandies.current[columns[j]].color = blank;
-        }
-      }
-    }
-  };
-
-  const checkForRows = (num) => {
-    for (let i = 0; i < WIDTH * WIDTH; i++) {
-
-      if (i % WIDTH > WIDTH - num) continue;
-
-
-      const rows = [];
-      for (let j = 0; j < num; j++) {
-        rows.push(i + j);
-      }
-
-      const decidedColor = currentCandies.current[i].color;
-
-      if (
-        rows.every(
-          (square) => currentCandies.current[square].color === decidedColor
-        )
-      ) {
-        for (let j = 0; j < rows.length; j++) {
-          currentCandies.current[rows[j]].color = blank;
-        }
-      }
-    }
+  const handleGameLogic = () => {
+    const updatedCandies = [...currentCandies];
+    checkForColumns(3, updatedCandies);
+    checkForRows(3, updatedCandies);
+    dispatch(updateCandies(updatedCandies));
   };
 
   const createBoard = () => {
@@ -77,21 +39,20 @@ function App() {
         candyColors[Math.floor(Math.random() * candyColors.length)];
       randomCandies.push({ color: randomColor });
     }
-    setCandies(randomCandies);
-    currentCandies.current = randomCandies;
+    dispatch(setCandies(randomCandies));
   };
 
   useEffect(() => {
     createBoard();
+  }, [dispatch]);
 
+  useEffect(() => {
     const timer = setInterval(() => {
-      checkForColumns(3);
-      checkForRows(3);
-      setCandies([...currentCandies.current]);
+      handleGameLogic();
     }, 100);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [currentCandies, dispatch]);
 
   return (
     <div className="max-w-[650px] p-5 mx-auto my-auto">
