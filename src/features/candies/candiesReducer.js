@@ -1,8 +1,9 @@
-import { SET_CANDIES, UPDATE_CANDIES } from './candiesActions';
+import { INCREASE_SCORE, SET_CANDIES, UPDATE_CANDIES } from './candiesActions';
 
 const initialState = {
   candies: [],
   currentCandies: [],
+  score: 0
 };
 
 const candiesReducer = (state = initialState, action) => {
@@ -19,6 +20,12 @@ const candiesReducer = (state = initialState, action) => {
         ...state,
         currentCandies: action.payload,
       };
+
+      case INCREASE_SCORE:
+        return{
+          ...state,
+          score: state.score + action.payload
+        }
 
     default:
       return state;

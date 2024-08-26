@@ -1,10 +1,4 @@
 import "./App.css";
-import blueCandy from "./images/blue-candy.png";
-import greenCandy from "./images/green-candy.png";
-import orangeCandy from "./images/orange-candy.png";
-import yellowCandy from "./images/yellow-candy.png";
-import redCandy from "./images/red-candy.png";
-import purpleCandy from "./images/purple-candy.png";
 import { useEffect } from "react";
 import { setCandies, updateCandies } from "./features/candies/candiesActions";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,26 +7,18 @@ import {
   checkForRows,
   moveIntoSquareBelow,
 } from "./utils/gameLogic";
-
-const WIDTH = 8;
-export const candyColors = [
-  blueCandy,
-  greenCandy,
-  orangeCandy,
-  yellowCandy,
-  redCandy,
-  purpleCandy,
-];
+import { CANDYCOLORS, WIDTH } from "./constants/constants";
 
 function App() {
   const dispatch = useDispatch();
   const candies = useSelector((state) => state.candies);
   const currentCandies = useSelector((state) => state.currentCandies);
+  const score = useSelector((state) => state.score);
 
   const handleGameLogic = () => {
     const updatedCandies = [...candies];
-    checkForColumns(3, updatedCandies);
-    checkForRows(3, updatedCandies);
+    checkForColumns(3, updatedCandies, dispatch);
+    checkForRows(3, updatedCandies, dispatch);
     dispatch(updateCandies(updatedCandies));
     moveIntoSquareBelow(updatedCandies);
   };
@@ -41,7 +27,7 @@ function App() {
     const randomCandies = [];
     for (let i = 0; i < WIDTH * WIDTH; i++) {
       const randomColor =
-        candyColors[Math.floor(Math.random() * candyColors.length)];
+        CANDYCOLORS[Math.floor(Math.random() * CANDYCOLORS.length)];
       randomCandies.push({ color: randomColor });
     }
     dispatch(setCandies(randomCandies));
@@ -55,12 +41,15 @@ function App() {
     const intervalId = setInterval(() => {
       handleGameLogic();
     }, 100);
-  
+
     return () => clearInterval(intervalId);
   }, [candies]);
 
   return (
     <div className="max-w-[650px] p-5 mx-auto my-auto">
+      <div className="text-2xl p-5 mb-3 bg-orange-400 text-white rounded-md border-white">
+        <span>Score: </span> <strong>{score}</strong>
+      </div>
       <div className="w-[604px] h-[620px] flex flex-wrap p-5 border-2 border-dashed bg-transparent relative">
         {currentCandies.map((candy, index) => (
           <div
