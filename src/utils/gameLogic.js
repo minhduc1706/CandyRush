@@ -1,4 +1,5 @@
-import blank from "../images/blank.png"; 
+import { candyColors } from "../App";
+import blank from "../images/blank.png";
 const WIDTH = 8;
 
 export const checkForColumns = (num, candies) => {
@@ -12,14 +13,13 @@ export const checkForColumns = (num, candies) => {
     const decidedColor = candies[i].color;
     if (decidedColor === blank) continue;
 
-    if (columnIndices.every(index => candies[index].color === decidedColor)) {
+    if (columnIndices.every((index) => candies[index].color === decidedColor)) {
       for (let index of columnIndices) {
         candies[index].color = blank;
       }
     }
   }
 };
-
 
 export const checkForRows = (num, candies) => {
   for (let i = 0; i < WIDTH * WIDTH; i++) {
@@ -33,10 +33,28 @@ export const checkForRows = (num, candies) => {
     const decidedColor = candies[i].color;
     if (decidedColor === blank) continue;
 
-    if (rowIndices.every(index => candies[index].color === decidedColor)) {
+    if (rowIndices.every((index) => candies[index].color === decidedColor)) {
       for (let index of rowIndices) {
         candies[index].color = blank;
       }
     }
   }
 };
+
+export const moveIntoSquareBelow = (currentCandies) => {
+  for (let i = 0; i < WIDTH * WIDTH - WIDTH; i++) {
+    const isFirstRow = i < WIDTH;
+
+    if (isFirstRow && currentCandies[i].color === blank) {
+      const randomColor =
+        candyColors[Math.floor(Math.random() * candyColors.length)];
+      currentCandies[i].color = randomColor;
+    }
+
+    if (currentCandies[i + WIDTH].color === blank) {
+      currentCandies[i + WIDTH].color = currentCandies[i].color;
+      currentCandies[i].color = blank;
+    }
+  }
+};
+
