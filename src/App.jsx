@@ -39,8 +39,8 @@ function App() {
       candyToReplace.getAttribute("data-index")
     );
 
-  const rowStart = Math.floor(candyDraggedIndex / WIDTH) * WIDTH;
-  const rowEnd = rowStart + WIDTH - 1;
+    const rowStart = Math.floor(candyDraggedIndex / WIDTH) * WIDTH;
+    const rowEnd = rowStart + WIDTH - 1;
 
     const validMoves = [
       candyDraggedIndex - 1,
@@ -53,27 +53,25 @@ function App() {
     }
 
     console.log(candyDraggedIndex, candyToReplaceIndex);
-    const validMove = validMoves.includes(candyToReplaceIndex)
+    const validMove = validMoves.includes(candyToReplaceIndex);
 
     if (validMove) {
       const updatedCandies = [...candies];
       updatedCandies[candyToReplaceIndex] = candies[candyDraggedIndex];
       updatedCandies[candyDraggedIndex] = candies[candyToReplaceIndex];
-  
+
       dispatch(updateCandies(updatedCandies));
-  
+
       checkForColumns(3, updatedCandies, dispatch);
       checkForRows(3, updatedCandies, dispatch);
       moveIntoSquareBelow(updatedCandies);
-  
+
       setCandyDragged(null);
       setCandyToReplace(null);
     } else {
       setCandyDragged(null);
       setCandyToReplace(null);
     }
-
-
   };
 
   const createBoard = () => {
@@ -118,7 +116,11 @@ function App() {
             onDrop={dragDrop}
             onDragEnd={dragEnd}
           >
-            <img src={candy.color} alt={candy.color} className="w-full pointer-events-none" />
+            <img
+              src={candy.color}
+              alt={candy.color}
+              className="w-full pointer-events-none"
+            />
           </div>
         ))}
       </div>
